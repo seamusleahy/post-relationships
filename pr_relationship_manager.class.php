@@ -188,8 +188,33 @@ class PR_RelationshipManager {
 	 *
 	 * @return array of post objects or a WP_Query object 
 	 */
-	function get_relationships( $name, $return_type='array', $from=null ) {
+	function get_relationships( $name, $return_type='wp_query', $from=null ) {
+		$from = $this->get_post_object( $from );
 
+		$relationship = $this->get_relationship( $name );
+
+		// Validate connections
+		$error = $this->validate_relationship( $relationship );
+		if( $error !== true ) {
+			return $error;
+		}
+
+		$posts = get_post_meta( $from->ID, $relationship->name, false );
+		$post_ids = $this->get_post_ids( $posts );
+
+		$query = new WP_Query( array(
+			'post_type' => 'any',
+			'post__in' => $post_ids,
+			'orderby' => 'post__in',
+			'order' => 'ASC',
+		));
+
+		if( $return_type=='array' ) {
+			$query->set( 'posts_per_page', '-1' );
+			return $query->get_posts();
+		} else {
+			return $query;
+		}
 	}
 
 
@@ -202,8 +227,35 @@ class PR_RelationshipManager {
 	 *
 	 * @return array of post objects or a WP_Query object
 	 */
-	function get_reverse_relationships( $name, $return_type='array', $to=null ) {
+	function get_reverse_relationships( $name, $return_type='wp_query', $to=null ) {
+		$to = $this->get_post_object( $to );
 
+		$relationship = $this->get_relationship( $name );
+
+		// Validate connections
+		$error = $this->validate_relationship( $relationship );
+		if( $error !== true ) {
+			return $error;
+		}
+
+
+		$query = new WP_Query( array(
+			'post_type' => 'any',
+			'meta_query' => array(
+				array(
+					'key' => $relationship->name,
+					'value' => $to->ID,
+					'compare' => '='
+				)
+			),
+		));
+
+		if( $return_type=='array' ) {
+			$query->set( 'posts_per_page', '-1' );
+			return $query->get_posts();
+		} else {
+			return $query;
+		}
 	}
 }
 
