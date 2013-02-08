@@ -36,7 +36,8 @@ function pr_register_post_relationship( $name, $args ) {
  * @param $to int|post|array - the post IDs or post object to connect
  */
 function pr_add_relationships( $name, $from, $to ) {
-
+  global $pr_relationship_manager;
+  return $pr_relationship_manager->add_relationships( $name, $from, $to );
 }
 
 
@@ -48,8 +49,10 @@ function pr_add_relationships( $name, $from, $to ) {
  * @param $to int|post|array - the post IDs or post object to connect
  */
 function pr_remove_relationships( $name, $from, $to ) {
-
+  global $pr_relationship_manager;
+  return $pr_relationship_manager->remove_relationships( $name, $from, $to );
 }
+
 
 /**
  * Update all the relationships to a post. It will remove all the 
@@ -60,7 +63,8 @@ function pr_remove_relationships( $name, $from, $to ) {
  * @param $to int|post|array - the post IDs or post object to connect
  */
 function pr_update_relationships( $name, $from, $to ) {
-
+  global $pr_relationship_manager;
+  return $pr_relationship_manager->update_relationships( $name, $from, $to );
 }
 
 
@@ -79,7 +83,8 @@ function pr_update_relationships( $name, $from, $to ) {
  * @return array of post objects or a WP_Query object 
  */
 function pr_get_relationships( $name, $return_type='array', $from=null ) {
-
+  global $pr_relationship_manager;
+  return $pr_relationship_manager->get_relationships( $name, $return_type, $from );
 }
 
 
@@ -93,5 +98,6 @@ function pr_get_relationships( $name, $return_type='array', $from=null ) {
  * @return array of post objects or a WP_Query object
  */
 function pr_get_reverse_relationships( $name, $return_type='array', $to=null ) {
-
+  global $pr_relationship_manager;
+  return $pr_relationship_manager->get_reverse_relationships( $name, $return_type, $to );
 }

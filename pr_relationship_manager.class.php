@@ -37,7 +37,7 @@ class PR_RelationshipManager {
 		foreach( (array) $posts as $post ) {
 			$ret_posts[] = $this->get_post( $post );
 		}
-		
+
 		return $ret_posts;
 	}
 
@@ -48,7 +48,7 @@ class PR_RelationshipManager {
 	 * @param $from int|post - the post ID or post object to connect to
 	 * @param $to int|post|array - the post IDs or post object to connect
 	 */
-	function pr_add_relationships( $name, $from, $to ) {
+	function add_relationships( $name, $from, $to ) {
 
 	}
 
@@ -60,7 +60,7 @@ class PR_RelationshipManager {
 	 * @param $from int|post - the post ID or post object to connect to
 	 * @param $to int|post|array - the post IDs or post object to connect
 	 */
-	function pr_remove_relationships( $name, $from, $to ) {
+	function remove_relationships( $name, $from, $to ) {
 
 	}
 
@@ -72,7 +72,7 @@ class PR_RelationshipManager {
 	 * @param $from int|post - the post ID or post object to connect to
 	 * @param $to int|post|array - the post IDs or post object to connect
 	 */
-	function pr_update_relationships( $name, $from, $to ) {
+	function update_relationships( $name, $from, $to ) {
 
 	}
 
@@ -91,7 +91,7 @@ class PR_RelationshipManager {
 	 *
 	 * @return array of post objects or a WP_Query object 
 	 */
-	function pr_get_relationships( $name, $return_type='array', $from=null ) {
+	function get_relationships( $name, $return_type='array', $from=null ) {
 
 	}
 
@@ -105,7 +105,7 @@ class PR_RelationshipManager {
 	 *
 	 * @return array of post objects or a WP_Query object
 	 */
-	function pr_get_reverse_relationships( $name, $return_type='array', $to=null ) {
+	function get_reverse_relationships( $name, $return_type='array', $to=null ) {
 
 	}
 }
