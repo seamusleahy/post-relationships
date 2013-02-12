@@ -37,6 +37,14 @@ class PR_Configuration {
 	}
 
 
+	/**
+	 * Get all the configuration instances
+	 */
+	static public function get_all_instances() {
+		return self::$_instances;
+	}
+
+
 
 	protected function __construct( $name, $args ) {
 		$this->name = $name;
@@ -47,7 +55,7 @@ class PR_Configuration {
 	/**
 	 * Update the args
 	 */
-	protected function update( $args ) {
+	public function update( $args ) {
 
 		foreach( array( 'from', 'to' ) as $field ) {
 			if( !empty( $args[$field]) ) {
@@ -56,5 +64,11 @@ class PR_Configuration {
 				$this->$field = array( 'post' );
 			}
 		}
+
+		// UI
+		$this->ui = empty( $args['ui'] ) ? false : $args['ui'];
 	}
+
+
+
 }
