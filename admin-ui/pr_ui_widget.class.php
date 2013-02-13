@@ -72,11 +72,16 @@ class PR_UI_Widget {
 		if( $this->direction == 'from' ) {
 			$this->current_values = pr_get_relationships( $this->relationship->name, 'array', $this->post );
 		} elseif ( $this->direction == 'to' ) {
-			// TODO:
+			$this->current_values = pr_get_reverse_relationships( $this->relationship->name, 'array', $this->post );
 		}
 		wp_nonce_field( $this->relationship->name, $this->nonce_name );
 
 		$this->render_field();
+
+		// Display the description
+		if( !empty( $this->ui_args['description'] ) ) {
+			echo '<p>', $this->ui_args['description'], '</p>';
+		}
 	}
 
 
@@ -122,7 +127,7 @@ class PR_UI_Widget {
 		if( $this->direction == 'from' ) {
 			pr_update_relationships( $this->relationship->name, $post, $value );
 		} elseif( $this->direction == 'to' ) {
-			// TODO
+			pr_update_reverse_relationships( $this->relationship->name, $post, $value );
 		}
 	}
 }

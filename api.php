@@ -68,6 +68,23 @@ function pr_update_relationships( $name, $from, $to ) {
 }
 
 
+
+
+/**
+ * Update all the reverse relationships to a post. It will not remove the 
+   * existing relationships, if not already related, it will add the $to as relationship.
+ *
+ * @param $name string - the name of the relationship field name
+ * @param $to int|post - the post ID or post object to connect to
+ * @param $from int|post|array - the post IDs or post object to connect
+ */
+function pr_update_reverse_relationships( $name, $to, $from ) {
+  global $pr_relationship_manager;
+  return $pr_relationship_manager->update_reverse_relationships( $name, $to, $from );
+}
+
+
+
 //
 // Retrieve the relationships
 //
@@ -82,7 +99,7 @@ function pr_update_relationships( $name, $from, $to ) {
  *
  * @return array of post objects or a WP_Query object 
  */
-function pr_get_relationships( $name, $return_type='array', $from=null ) {
+function pr_get_relationships( $name, $return_type='wp_query', $from=null ) {
   global $pr_relationship_manager;
   return $pr_relationship_manager->get_relationships( $name, $return_type, $from );
 }
@@ -97,7 +114,7 @@ function pr_get_relationships( $name, $return_type='array', $from=null ) {
  *
  * @return array of post objects or a WP_Query object
  */
-function pr_get_reverse_relationships( $name, $return_type='array', $to=null ) {
+function pr_get_reverse_relationships( $name, $return_type='wp_query', $to=null ) {
   global $pr_relationship_manager;
   return $pr_relationship_manager->get_reverse_relationships( $name, $return_type, $to );
 }
