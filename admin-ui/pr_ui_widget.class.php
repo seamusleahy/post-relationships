@@ -130,6 +130,16 @@ class PR_UI_Widget {
 			pr_update_reverse_relationships( $this->relationship->name, $post, $value );
 		}
 	}
+
+
+	/**
+	 * Called to enqueue stylesheets and javascripts
+	 *
+	 * @param $post
+	 */
+	function enqueue_styles_and_scripts( ) {
+
+	}
 }
 
 PR_UI_Widget::initialize_hooks();
