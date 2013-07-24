@@ -74,17 +74,10 @@ class PR_Admin_UI {
 
 
 	/**
-	 * Enqueue scripts and styles needed by the widgets
-	 */
-	function enqueue_scripts_and_styles( $widget ) {
-
-	}
-
-	/**
 	 * Handle the saving
 	 */
 	function save_post( $post_id ) {
-		// Bail if we're doing an auto save  
+		// Bail if we're doing an auto save	
 		if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
@@ -121,7 +114,7 @@ class PR_Admin_UI {
 	/**
 	 * Fills in missing relationship ui args and then returns the settings.
 	 */
-	protected function relationship_ui_args( $relationship ) {
+	function relationship_ui_args( $relationship ) {
 		// Not set, set it all to false
 		if( !is_array( $relationship->ui ) ) {
 			$relationship->ui = array(

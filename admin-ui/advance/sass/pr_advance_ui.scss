@@ -1,0 +1,211 @@
+@import "compass/css3";
+@import "compass/utilities/general/clearfix";
+
+$med-gray: #dfdfdf;
+$color-bg: #fff;
+$color-border: #dfdfdf;
+$color-text: #333;
+$color-light-text: #888;
+
+$color-button-bg: #f3f3f3;
+$color-button-border: #bbb;
+$color-button-bg-image: linear-gradient(top, #fefefe, #f4f4f4);
+$color-button-text: #333;
+$button-text-shadow: 0 1px 0 #fff;
+
+$color-button-bg-hover: #f3f3f3;
+$color-button-border-hover: #999;
+$color-button-bg-image-hover: linear-gradient(top, #fff, #f3f3f3);
+$color-button-text-hover: #222;
+$button-text-shadow-hover: 0 1px 0 #fff;
+
+$post-list-height: 350px;
+
+.pr-advance-widget {
+  @include pie-clearfix;
+
+  @include border-radius( 3px );
+  border: solid 1px $med-gray;
+  background-color: $color-bg;
+
+
+  .selected,
+  .pool {
+    width: 50%;
+    @include box-sizing( border-box );
+  }
+
+  .selected {
+    float: right;
+  }
+
+  .pool {
+    float: left;
+    border-right: solid 1px shade( $med-gray, 10% );
+  }
+
+  h4 {
+    margin: 0;
+    padding: 5px 10px;
+    height: 16px;
+
+    background-color: $med-gray;
+  }
+
+
+  .post-list {
+    height: $post-list-height;
+    overflow: auto;
+  }
+
+  .pool .post-list {
+    height: $post-list-height - 60px + 16px;
+  }
+
+  .post {
+    padding: 5px 10px;
+    background-color: $color-bg;
+    cursor: move;
+    position: relative;
+
+    + .post {
+      border-top: solid 1px mix( $color-border, $color-bg );
+    }
+
+    
+    h5 {
+      margin: 0;
+    }
+
+    .actions {
+      float: left;
+      position: relative;
+      left: -5px;
+      min-height: 2em;
+
+      a {
+        display: block;
+        @include border-radius( 50% );
+        width: 13px;
+        height: 13px;
+        text-align: center;
+        background-color: $color-button-bg;
+        @include background-image( $color-button-bg-image );
+        border: solid 1px $color-button-border;
+        color: $color-button-text;
+        line-height: 12px;
+        font-size: 12px;
+        text-shadow: $button-text-shadow;
+
+        cursor: pointer;
+
+        &:hover {
+          background-color: $color-button-bg-hover;
+          @include background-image( $color-button-bg-image-hover );
+          border-color: $color-button-border-hover;
+          color: $color-button-text-hover;
+          text-shadow: $button-text-shadow-hover;  
+        }
+      }
+    }
+
+    .minified-view {
+      .wp-post-image {
+        float: left;
+        margin-right: 5px;
+        margin-top: 3px;
+      }
+
+      .meta .expand {
+        cursor: pointer;
+      }
+    }
+
+    .expanded-view {
+      overflow: hidden;
+      height: 0;
+      color: $color-light-text;
+      font-size: 11px;
+      position: relative;
+      
+      @include transition(all 0.3s);
+      margin: 0 10px;
+
+      &.show {
+        height: 150px;
+      }
+
+      .inner {
+        height: 150px;
+        overflow-y: scroll;
+      }
+
+      &:before,
+      &:after {
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: 1;
+        height: 10px;
+        left: 0;
+        right: 0;
+        @include background-image( radial-gradient( ellipse closest-side, rgba(#000, 0.15), rgba(#000, 0) ) );
+      }
+
+      &:before { 
+        top: -5px;
+        
+      }
+
+      &:after { 
+        bottom: -5px;
+      }
+
+      p {
+        margin-bottom: 1em;
+      }
+    }
+
+    &.ui-draggable-dragging,
+    &.ui-sortable-helper {
+      border-top: 0 none;
+      @include box-shadow( 0 0 5px rgba(#000, 0.5));
+    }
+
+    &.hide {
+      display: none;
+    }
+  }
+
+  .pool .actions .remove,
+  .selected .actions .add {
+    display: none;
+  }
+
+  .pool .sortable-placeholder {
+    display: none;
+  }
+
+  .selected .sortable-placeholder {
+    opacity: 1;
+    border: 0 none;
+  }
+
+  .selected .post + .sortable-placeholder {
+    border-top: solid 1px mix( $color-border, $color-bg );
+  }
+
+  .filters {
+    height: 60px;
+    padding: 5px 10px;
+
+    background-color: $med-gray;
+
+    label {
+      font-size: 11px;
+      color: $color-light-text;
+    }
+
+  }
+
+}

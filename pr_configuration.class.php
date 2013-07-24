@@ -27,7 +27,7 @@ class PR_Configuration {
 
 
 	/**
-	 *  Get the a configuration instances
+	 *	Get the a configuration instances
 	 */
 	static public function get_instances( $name ) {
 		if( array_key_exists( $name, self::$_instances ) ) {

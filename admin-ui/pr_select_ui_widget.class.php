@@ -26,23 +26,23 @@ class PR_Select_UI_Widget extends PR_UI_Widget {
 			'orderby' => $this->ui_args['orderby'],
 			'order' => $this->ui_args['order'],
 			'post__not_in' => array( $this->post->ID ),
+			'posts_per_page' => 100,
+			'fields' => 'ids',
 		);
-		$query = new WP_Query( $args );
+		$posts = get_posts( $args );
 
 		$multiple = $this->ui_args['multiple'] ? ' multiple="multiple"' : '';
 
-		$current_ids = array_map( function( $p ) { return $p->ID; }, $this->current_values );
+		$current_ids = array_map( function( $p ) { return $p->ID; }, $this->current_values->posts );
 
 		?>
 		<select name="<?php echo $this->field_name; ?>" <?php echo $multiple; ?> <?php if( $this->ui_args['size'] > 1 ) { echo 'size="'.$this->ui_args['size'].'"'; } ?>>
-			<?php while( $query->have_posts() ): $query->the_post(); ?>
-				<?php $selected = in_array( get_the_ID(), $current_ids ) ? ' selected="selected"' : ''; ?>
-				<option value="<?php the_ID(); ?>" <?php echo $selected; ?>><?php the_title(); ?></option>
-			<?php endwhile; 
-			wp_reset_postdata(); ?>
+			<?php foreach( $posts as $post_id ) : ?>
+				<?php $selected = in_array( $post_id, $current_ids ) ? ' selected="selected"' : ''; ?>
+				<option value="<?php $post_id; ?>" <?php echo $selected; ?>><?php echo esc_html( get_the_title( $post_id ) ); ?></option>
+			<?php endforeach; ?> 
 		</select>
 		<?php
-
 	}
 }
 

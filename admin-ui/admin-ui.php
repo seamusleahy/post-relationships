@@ -6,4 +6,4 @@
 require_once __DIR__ . '/pr_admin_ui.class.php';
 require_once __DIR__ . '/pr_ui_widget.class.php';
 require_once __DIR__ . '/pr_select_ui_widget.class.php';
-require_once __DIR__ . '/pr_advance_ui_widget.class.php';
+require_once __DIR__ . '/advance/pr_advance_ui_widget.class.php';

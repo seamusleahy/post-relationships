@@ -15,5 +15,5 @@ require_once __DIR__ . '/api.php';
 // Allow the admin ui to be disabled for someone to only use the core.
 // To disable it, set PR_ENABLE_ADMIN_UI constant to `false` in your wp-config.php.
 if( !defined( 'PR_ENABLE_ADMIN_UI') || PR_ENABLE_ADMIN_UI ) {
-  require_once __DIR__ . '/admin-ui/admin-ui.php';
+	require_once __DIR__ . '/admin-ui/admin-ui.php';
 }

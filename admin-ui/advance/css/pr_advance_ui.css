@@ -1,0 +1,207 @@
+/* line 24, ../sass/pr_advance_ui.scss */
+.pr-advance-widget {
+  *zoom: 1;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  border: solid 1px #dfdfdf;
+  background-color: white;
+}
+/* line 38, ../../../../../../../../../../../.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+.pr-advance-widget:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* line 33, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .selected,
+.pr-advance-widget .pool {
+  width: 50%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 38, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .selected {
+  float: right;
+}
+/* line 42, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .pool {
+  float: left;
+  border-right: solid 1px #c8c8c8;
+}
+/* line 47, ../sass/pr_advance_ui.scss */
+.pr-advance-widget h4 {
+  margin: 0;
+  padding: 5px 10px;
+  height: 16px;
+  background-color: #dfdfdf;
+}
+/* line 56, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post-list {
+  height: 350px;
+  overflow: auto;
+}
+/* line 61, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .pool .post-list {
+  height: 306px;
+}
+/* line 65, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post {
+  padding: 5px 10px;
+  background-color: white;
+  cursor: move;
+  position: relative;
+}
+/* line 71, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post + .post {
+  border-top: solid 1px #efefef;
+}
+/* line 76, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post h5 {
+  margin: 0;
+}
+/* line 80, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .actions {
+  float: left;
+  position: relative;
+  left: -5px;
+  min-height: 2em;
+}
+/* line 86, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .actions a {
+  display: block;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+  width: 13px;
+  height: 13px;
+  text-align: center;
+  background-color: #f3f3f3;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fefefe), color-stop(100%, #f4f4f4));
+  background-image: -webkit-linear-gradient(top, #fefefe, #f4f4f4);
+  background-image: -moz-linear-gradient(top, #fefefe, #f4f4f4);
+  background-image: -o-linear-gradient(top, #fefefe, #f4f4f4);
+  background-image: linear-gradient(top, #fefefe, #f4f4f4);
+  border: solid 1px #bbbbbb;
+  color: #333333;
+  line-height: 12px;
+  font-size: 12px;
+  text-shadow: 0 1px 0 white;
+  cursor: pointer;
+}
+/* line 102, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .actions a:hover {
+  background-color: #f3f3f3;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #f3f3f3));
+  background-image: -webkit-linear-gradient(top, #ffffff, #f3f3f3);
+  background-image: -moz-linear-gradient(top, #ffffff, #f3f3f3);
+  background-image: -o-linear-gradient(top, #ffffff, #f3f3f3);
+  background-image: linear-gradient(top, #ffffff, #f3f3f3);
+  border-color: #999999;
+  color: #222222;
+  text-shadow: 0 1px 0 white;
+}
+/* line 113, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .minified-view .wp-post-image {
+  float: left;
+  margin-right: 5px;
+  margin-top: 3px;
+}
+/* line 119, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .minified-view .meta .expand {
+  cursor: pointer;
+}
+/* line 124, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .expanded-view {
+  overflow: hidden;
+  height: 0;
+  color: #888888;
+  font-size: 11px;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+  margin: 0 10px;
+}
+/* line 134, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .expanded-view.show {
+  height: 150px;
+}
+/* line 138, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .expanded-view .inner {
+  height: 150px;
+  overflow-y: scroll;
+}
+/* line 144, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .expanded-view:before, .pr-advance-widget .post .expanded-view:after {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  height: 10px;
+  left: 0;
+  right: 0;
+  background-image: -webkit-gradient(radial, ellipse closest-side, 0, ellipse closest-side, 100, color-stop(0%, rgba(0, 0, 0, 0.15)), color-stop(100%, rgba(0, 0, 0, 0)));
+  background-image: -webkit-radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+  background-image: -moz-radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+  background-image: -o-radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+  background-image: radial-gradient(ellipse closest-side, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+}
+/* line 155, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .expanded-view:before {
+  top: -5px;
+}
+/* line 160, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .expanded-view:after {
+  bottom: -5px;
+}
+/* line 164, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post .expanded-view p {
+  margin-bottom: 1em;
+}
+/* line 170, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post.ui-draggable-dragging, .pr-advance-widget .post.ui-sortable-helper {
+  border-top: 0 none;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+/* line 175, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .post.hide {
+  display: none;
+}
+/* line 181, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .pool .actions .remove,
+.pr-advance-widget .selected .actions .add {
+  display: none;
+}
+/* line 185, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .pool .sortable-placeholder {
+  display: none;
+}
+/* line 189, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .selected .sortable-placeholder {
+  opacity: 1;
+  border: 0 none;
+}
+/* line 194, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .selected .post + .sortable-placeholder {
+  border-top: solid 1px #efefef;
+}
+/* line 198, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .filters {
+  height: 60px;
+  padding: 5px 10px;
+  background-color: #dfdfdf;
+}
+/* line 204, ../sass/pr_advance_ui.scss */
+.pr-advance-widget .filters label {
+  font-size: 11px;
+  color: #888888;
+}

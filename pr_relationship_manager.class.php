@@ -2,7 +2,7 @@
 
 class PR_RelationshipManager {
 
-	protected function get_relationship( $name ) {
+	public function get_relationship( $name ) {
 		return PR_Configuration::get_instances( $name );
 	}
 
@@ -10,18 +10,16 @@ class PR_RelationshipManager {
 	 * Get a post ID
 	 */
 	protected function get_post_id( $post ) {
-		if( !empty( $post->ID ) ) {
-			return $post->ID;
-		} else {
+		if( is_numeric( $post ) ) {
 			return (int) $post;
-		}
-	}
+			
+		} elseif( is_a( $post, 'WP_Post' ) ) {
+			return $post->ID;
 
-	/**
-	 * Get a post ID
-	 */
-	protected function get_post( $post ) {
-		return get_post( $post );
+		} else {
+			$post = get_post( $post );
+			return $post->ID;
+		}
 	}
 
 	/**
@@ -54,7 +52,7 @@ class PR_RelationshipManager {
 		// is_a( $post, 'WP_Post' )
 		$ret_posts = array();
 		foreach( (array) $posts as $post ) {
-			$ret_posts[] = $this->get_post( $post );
+			$ret_posts[] = $this->get_post_object( $post );
 		}
 
 		return $ret_posts;
@@ -131,6 +129,16 @@ class PR_RelationshipManager {
 		foreach ( $to as $t ) {
 			if( !in_array( $t->ID, $existing_connections ) ) {
 				add_post_meta( $from->ID, $relationship->name, $t->ID, false );
+
+				// Update the reverse direction for quick calculations of the reverse side
+				$reverse_relationships = json_decode( get_post_meta( $t->ID, '_reverse__'.$relationship->name, true ) );
+				if( !is_array( $reverse_relationships ) ) {
+					$reverse_relationships = array();
+				}
+				if( !in_array( $from->ID, $reverse_relationships ) ) {
+					$reverse_relationships[] = $from->ID;
+					update_post_meta( $t->ID, '_reverse__'.$relationship->name, json_encode( $reverse_relationships ) );
+				}
 			}
 		}
 	}
@@ -157,6 +165,18 @@ class PR_RelationshipManager {
 
 		foreach ( $to as $t ) {
 			delete_post_meta( $from->ID, $relationship->name, $t->ID, false );
+
+			// Update the reverse direction for quick calculations of the reverse side
+			$reverse_relationships = json_decode( get_post_meta( $t->ID, '_reverse__'.$relationship->name, true ) );
+			if( !is_array( $reverse_relationships ) ) {
+				$reverse_relationships = array();
+			}
+
+			$reverse_relationships = array_unique( $reverse_relationships );
+			if( ( $key = array_search( $from->ID, $reverse_relationships ) ) !== false ) {
+				unset( $reverse_relationships[ $key ] );
+				update_post_meta( $t->ID, '_reverse__'.$relationship->name, json_encode( $reverse_relationships ) );
+			}
 		}
 	}
 
@@ -185,12 +205,46 @@ class PR_RelationshipManager {
 			return $error;
 		}
 
+		// Determing the ones that will be deleted for the reverse linking
+		$previous_tos = get_post_meta( $from->ID, $relationship->name, false );
+		if( is_array( $previous_tos ) ) {
+			$removed_posts = array_diff( $previous_tos, $this->get_post_ids( $to ) );
+		} else {
+			$removed_posts = array();
+		}
+
 		// Delete all
 		delete_post_meta( $from->ID, $relationship->name );
 
 		// Add all
 		foreach ( $to as $t ) {
 			add_post_meta( $from->ID, $relationship->name, $t->ID, false );
+
+			// Update the reverse direction for quick calculations of the reverse side
+			$reverse_relationships = json_decode( get_post_meta( $t->ID, '_reverse__'.$relationship->name, true ) );
+			if( !is_array( $reverse_relationships ) ) {
+				$reverse_relationships = array();
+			}
+
+			if( !in_array( $from->ID, $reverse_relationships ) ) {
+				$reverse_relationships[] = $from->ID;
+				update_post_meta( $t->ID, '_reverse__'.$relationship->name, json_encode( $reverse_relationships ) );
+			}
+		}
+		
+		// Remove the reverse linking from those that were deleted
+		foreach ( $removed_posts as $t ) {
+			// Update the reverse direction for quick calculations of the reverse side
+			$reverse_relationships = json_decode( get_post_meta( $t, '_reverse__'.$relationship->name, true ) );
+			if( !is_array( $reverse_relationships ) ) {
+				$reverse_relationships = array();
+			}
+
+			$reverse_relationships = array_unique( $reverse_relationships );
+			if( ( $key = array_search( $from->ID, $reverse_relationships ) ) !== false ) {
+				unset( $reverse_relationships[ $key ] );
+				update_post_meta( $t, '_reverse__'.$relationship->name, json_encode( $reverse_relationships ) );
+			}
 		}
 	}
 
@@ -207,6 +261,7 @@ class PR_RelationshipManager {
 		$from = $this->get_post_objects( $from );
 		$to = $this->get_post_object( $to );
 
+
 		$relationship = $this->get_relationship( $name );
 
 		// Validate connections
@@ -221,7 +276,11 @@ class PR_RelationshipManager {
 		}
 
 		// Get the existing posts
-		$existing_connections = $this->get_reverse_relationships( $name, 'array', $to, array( 'fields' => 'ids' ) );
+		$existing_connections = json_decode( get_post_meta( $to->ID, '_reverse__'.$relationship->name, true ) );
+		if( !is_array( $existing_connections ) ) {
+			$existing_connections = array();
+		}
+
 
 		// Add all
 		foreach ( $from as $f ) {
@@ -232,7 +291,7 @@ class PR_RelationshipManager {
 				// A new connection
 				add_post_meta( $f->ID, $relationship->name, $to->ID, false );
 			} else {
-				unset( $existing_connections[ $key ] ); // Remove it to know which ones to remove
+				unset( $existing_connections[ $key ] ); // Remove it to because the remaining we know to remove
 			}
 		}
 
@@ -252,12 +311,37 @@ class PR_RelationshipManager {
 	 * Get the posts that belong to the $from post.
 	 *
 	 * @param $name string - the name of the relationship field name
-	 * @param $return_type string (optional) - the return value 'array' or 'wp_query'
 	 * @param $from int|post (optional) - the post IDs or post object
+	 *
+	 * @return array of IDs
+	 */
+	function get_relationship_ids( $name, $from=null ) {
+		$from = $this->get_post_object( $from );
+
+		$relationship = $this->get_relationship( $name );
+
+		// Validate connections
+		$error = $this->validate_relationship( $relationship );
+		if( $error !== true ) {
+			return $error;
+		}
+
+		$posts = get_post_meta( $from->ID, $relationship->name, false );
+
+		return (array) $posts;
+	}
+
+
+	/**
+	 * Get the posts that belong to the $from post.
+	 *
+	 * @param $name string - the name of the relationship field name
+	 * @param $from int|post (optional) - the post IDs or post object
+	 * @param $additiona_args
 	 *
 	 * @return array of post objects or a WP_Query object 
 	 */
-	function get_relationships( $name, $return_type='wp_query', $from=null, $additional_args=array() ) {
+	function get_relationships( $name, $from=null, $additional_args=array() ) {
 		$from = $this->get_post_object( $from );
 
 		$relationship = $this->get_relationship( $name );
@@ -282,38 +366,56 @@ class PR_RelationshipManager {
 			'post__in' => $post_ids,
 			'orderby' => 'post__in',
 			'order' => 'ASC',
+			'post_relationship' => array( 'relationship' => $relationship, 'direction' => 'to' ),
 		);
 
-		if( $return_type=='array' ) {
-			$query_args['posts_per_page'] = '-1';
-		}
-
-		// Add additional arguments
-		if( !empty( $additional_args['fields'] ) ) {
-			$query_args['fields'] = $additional_args['fields'];
-		}
+	
+		$query_args = $this->setup_extra_query_args( $query_args, $additional_args );
 
 		$query = new WP_Query( $query_args );
 
-		if( $return_type=='array' ) {
-			return $query->get_posts();
-		} else {
-			return $query;
-		}
+		return $query;
 	}
+
+	/**
+	 * Get the post IDs thats the $to post belongs to.
+	 *
+	 * @param $name string - the name of the relationship field name on the from posts.
+	 * @param $to int|post (optional) - the post IDs or post object
+	 *
+	 * @return array of IDs
+	 */
+	function get_reverse_relationship_ids( $name, $to=null ) {
+		$to = $this->get_post_object( $to );
+
+		$relationship = $this->get_relationship( $name );
+
+		// Validate connections
+		$error = $this->validate_relationship( $relationship );
+		if( $error !== true ) {
+			return $error;
+		}
+
+		$posts = json_decode( get_post_meta( $to->ID, '_reverse__'.$relationship->name, true ) );
+		if( !is_array( $posts ) ) {
+			$posts = array();
+		}
+
+		return $posts;
+	}
+
 
 
 	/**
 	 * Get the posts thats the $to post belongs to.
 	 *
 	 * @param $name string - the name of the relationship field name on the from posts.
-	 * @param $return_type string (optional) - the return value 'array' or 'wp_query'
 	 * @param $to int|post (optional) - the post IDs or post object
 	 * @param $additional_args (optional) - additional arguments
 	 *
 	 * @return array of post objects or a WP_Query object
 	 */
-	function get_reverse_relationships( $name, $return_type='wp_query', $to=null, $additional_args=array() ) {
+	function get_reverse_relationships( $name, $to=null, $additional_args=array() ) {
 		$to = $this->get_post_object( $to );
 
 		$relationship = $this->get_relationship( $name );
@@ -334,24 +436,41 @@ class PR_RelationshipManager {
 					'compare' => '='
 				)
 			),
+			'post_relationship' => array( 'relationship' => $relationship, 'direction' => 'to'),
 		);
 
-		if( $return_type=='array' ) {
-			$query_args['posts_per_page'] = '-1';
-		}
-
-		// Add additional arguments
-		if( !empty( $additional_args['fields'] ) ) {
-			$query_args['fields'] = $additional_args['fields'];
-		}
+		$query_args = $this->setup_extra_query_args( $query_args, $additional_args );
 
 		$query = new WP_Query( $query_args );
 
-		if( $return_type=='array' ) {
-			return $query->get_posts();
-		} else {
-			return $query;
+		return $query;
+	}
+
+
+	/**
+	 * Setup query args
+	 */
+	function setup_extra_query_args( $query_args, $additional_args ) {
+
+		foreach ($additional_args as $key => $value ) {
+			
+			switch( $key ) {
+				case 'meta_query':
+					$query_args['meta_query'] = $query_args['meta_query'] + $additional_args['meta_query'];
+					break;
+
+				case 'posts_per_page':
+					if( (int) $value > 0 ) {
+						$query_args[$key] = $value;
+					}
+					break;
+
+				default:
+					$query_args[$key] = $value;
+			}
 		}
+
+		return $query_args;
 	}
 }
 

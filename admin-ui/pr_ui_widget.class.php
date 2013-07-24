@@ -53,7 +53,7 @@ class PR_UI_Widget {
 		$this->nonce_name = $relationship->name . '-nonce';
 
 		$this->_field_name = $relationship->name . '-' . $direction;
-		$this->field_name =  $this->_field_name . '[]';
+		$this->field_name =	$this->_field_name . '[]';
 	}
 
 
@@ -70,9 +70,12 @@ class PR_UI_Widget {
 	 */
 	function render() {
 		if( $this->direction == 'from' ) {
-			$this->current_values = pr_get_relationships( $this->relationship->name, 'array', $this->post );
+			$this->current_values = pr_get_relationships( $this->relationship->name, $this->post );
+			$this->current_value_ids = pr_get_relationship_ids( $this->relationship->name, $this->post );
+
 		} elseif ( $this->direction == 'to' ) {
-			$this->current_values = pr_get_reverse_relationships( $this->relationship->name, 'array', $this->post );
+			$this->current_values = pr_get_reverse_relationships( $this->relationship->name, $this->post );
+			$this->current_value_ids = pr_get_reverse_relationship_ids( $this->relationship->name, $this->post );
 		}
 		wp_nonce_field( $this->relationship->name, $this->nonce_name );
 
@@ -112,15 +115,13 @@ class PR_UI_Widget {
 			return;
 		}
 
-		if( !array_key_exists( $this->_field_name, $_POST ) ) {
-			return;
-		}
+		$value = $this->save_post_get_value( $post );
 
-		$value = $_POST[ $this->_field_name ];
-
-		if( !is_array( $value ) ) {
-			// It must be an array!!!
-			return;
+		// Remove empty items
+		foreach ( (array) $value as $k => $v ) {
+			if ( empty($v) ) {
+				unset($value[$k]);
+			}
 		}
 
 		// Now we have a IDs
@@ -139,6 +140,24 @@ class PR_UI_Widget {
 	 */
 	function enqueue_styles_and_scripts( ) {
 
+	}
+
+
+	/**
+	 * Get the data when the post is saved
+	 */
+	function save_post_get_value( $post ) {
+
+		if ( !isset( $_POST[ $this->_field_name ] ) )
+			return;
+
+		$value = $_POST[ $this->_field_name ];
+
+		if( !is_array( $value ) ) {
+			$value = explode( ',', $value );
+		}
+
+		return $value;
 	}
 }
 
