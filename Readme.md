@@ -30,7 +30,7 @@ function theme_slug_post_relationships() {
 				'to' => array(
 					'widget'      => 'advance', // Always use advance
 					'label'       => 'Post Type B', // Label for meta box
-					'description' => __( 'Posts from post type B' )
+					'description' => __( 'The post type I want to make the relationship with' )
 				),
 			)
 		) );
@@ -46,6 +46,46 @@ You can use the `pr_get_relationships` function to return a WP_Query object
 <ul class="sub-posts">
         <?php
         $sub_query = pr_get_relationships( $name, $post->ID, array(  'posts_per_page' => 2, 'orderby' => 'date', 'order' => 'DESC' ) );
+
+        if( !is_wp_error( $sub_query ) ):
+            foreach ( $sub_query->get_posts() as $sub_post ): ?>
+                <li>
+                    <h2><a href="<?php echo get_permalink( $sub_post->ID ); ?>"><?php echo get_the_title( $sub_post->ID ); ?></a></h2>
+                </li>
+            <?php
+            endforeach;
+        endif; ?>
+    </ul>
+```
+
+Full custom example 
+
+```php
+// Register 
+function bjonesy_post_relationships() {
+	pr_register_post_relationship( 'sub_posts', array(
+			'from' => array( 'post' ), // From this post type
+			'to'   => array( 'my-custom-post-type' ), // To this post type
+			'ui'   => array(
+				'from' => array(
+					'widget'      => 'advance', // Always use advance 
+					'label'       => 'Regular Posts', // Label for the meta box
+					'description' => __( 'Regular posts' ),
+				),
+				'to' => array(
+					'widget'      => 'advance', // Always use advance
+					'label'       => 'My Custom Post Type', // Label for meta box
+					'description' => __( 'My custom post type' )
+				),
+			)
+		) );
+}
+add_action( 'init', 'bjonesy_post_relationships' );
+
+// Display the relationships
+<ul class="sub-posts">
+        <?php
+        $sub_query = pr_get_relationships( 'sub_posts', $post->ID, array(  'posts_per_page' => 2, 'orderby' => 'date', 'order' => 'DESC' ) );
 
         if( !is_wp_error( $sub_query ) ):
             foreach ( $sub_query->get_posts() as $sub_post ): ?>
