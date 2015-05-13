@@ -28,6 +28,7 @@ class PR_Select_UI_Widget extends PR_UI_Widget {
 			'post__not_in' => array( $this->post->ID ),
 			'posts_per_page' => 100,
 			'fields' => 'ids',
+			'suppress_filters' => false
 		);
 		$posts = get_posts( $args );
 

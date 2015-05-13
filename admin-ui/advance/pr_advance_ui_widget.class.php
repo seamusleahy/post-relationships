@@ -185,7 +185,7 @@ class PR_Advance_UI_Widget extends PR_UI_Widget {
 	 * Get the data when the post is saved
 	 */
 	function save_post_get_value( $post ) {
-		$value = $_POST[ $this->_field_name ];
+		$value = array_map( 'esc_attr', $_POST[ $this->_field_name ] );
 
 		if( is_array( $value ) ) {
 			$value = $value[0];

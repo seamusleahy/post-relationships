@@ -128,7 +128,8 @@ class PR_RelationshipManager {
 
 		foreach ( $to as $t ) {
 			if( !in_array( $t->ID, $existing_connections ) ) {
-				add_post_meta( $from->ID, $relationship->name, $t->ID, false );
+				$sanitize_id = sanitize_key( $t->ID );
+				add_post_meta( $from->ID, $relationship->name, $sanitize_id, false );
 
 				// Update the reverse direction for quick calculations of the reverse side
 				$reverse_relationships = json_decode( get_post_meta( $t->ID, '_reverse__'.$relationship->name, true ) );
@@ -218,7 +219,8 @@ class PR_RelationshipManager {
 
 		// Add all
 		foreach ( $to as $t ) {
-			add_post_meta( $from->ID, $relationship->name, $t->ID, false );
+			$sanitize_id = sanitize_key( $t->ID );
+			add_post_meta( $from->ID, $relationship->name, $sanitize_id, false );
 
 			// Update the reverse direction for quick calculations of the reverse side
 			$reverse_relationships = json_decode( get_post_meta( $t->ID, '_reverse__'.$relationship->name, true ) );
@@ -282,18 +284,24 @@ class PR_RelationshipManager {
 		}
 
 
+		$from_ids = array();
 		// Add all
 		foreach ( $from as $f ) {
 			// Found out if the connection already exists
 			$key = array_search( $f->ID, $existing_connections );
+			$from_ids[] = $f->ID;
 
 			if( $key === false ) {
 				// A new connection
-				add_post_meta( $f->ID, $relationship->name, $to->ID, false );
+				$sanitize_id = sanitize_key( $to->ID );
+				add_post_meta( $f->ID, $relationship->name, $sanitize_id, false );
 			} else {
 				unset( $existing_connections[ $key ] ); // Remove it to because the remaining we know to remove
 			}
 		}
+
+		// Save reverse relationship
+		update_post_meta( $to->ID, '_reverse__'.$relationship->name, json_encode( $from_ids ) );
 
 		// Delete existing connections that are not kept
 		foreach( $existing_connections as $id ) {
