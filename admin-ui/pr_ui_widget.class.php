@@ -151,7 +151,7 @@ class PR_UI_Widget {
 		if ( !isset( $_POST[ $this->_field_name ] ) )
 			return;
 
-		$value = $_POST[ $this->_field_name ];
+		$value = array_map( 'esc_html', $_POST[ $this->_field_name ] );
 
 		if( !is_array( $value ) ) {
 			$value = explode( ',', $value );

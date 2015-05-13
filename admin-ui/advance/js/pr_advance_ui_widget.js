@@ -354,10 +354,15 @@
      */
     removeSelectedItems: function() {
       var ids = this.selectedModel.getIds();
-      for( var i=0; i<ids.length; ++i ) {
-        this.$el.find('[data-id="'+ids[i]+'"]').remove();
-      }
-
+      this.$el.children().filter(function() {
+        var id = $(this).data('id');
+        if ( id ) {
+          return $.inArray( id, ids ) != -1;
+        } else {
+          return false;
+        }
+      }).remove();
+      
       this.trigger( 'updated' );
     },
 
@@ -440,10 +445,16 @@
 
     loadNextPageWhenReady: function( event ) {
 
-      //   var onPoolScroll = function( event ) {
+      // Load the next page if it is empty
+      if ( this.$el.children().length == 0 ) {
+        this.model.fetchNextPage();
+        return;
+      }
+
       var lastItem = this.$el.children().eq(-1);
       var viewportHeight = this.$el.height();
       var contentHeight = this.$el.scrollTop() + (lastItem.offset().top - this.$el.offset().top) + lastItem.outerHeight();
+
 
       if ( viewportHeight >  contentHeight ||
           this.$el.scrollTop() + viewportHeight >= contentHeight - 30) {
@@ -452,6 +463,12 @@
     },
 
     insertNextPage: function( items ) {
+      
+      var selectedIds = this.selectedModel.getIds();
+      items = items.filter( function() {
+        return $.inArray( $(this).data('id'), selectedIds ) == -1;
+      });
+
       this.$el.append( items );
       this.$el.sortable( 'refresh' );
 
